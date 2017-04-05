@@ -18,3 +18,14 @@ scalacOptions ++= Seq("-unchecked", "-deprecation", "-Xcheckinit", "-encoding", 
 
 // Fork a new JVM for 'run' and 'test:run', to avoid JavaFX double initialization problems
 fork := true
+
+
+// Configuration for sbt-native-packager / JDKPackagerPlugin
+
+enablePlugins(JDKPackagerPlugin)
+
+maintainer := "Dmitry Revenko"
+packageSummary := "Merchant Application for a friend"
+packageDescription := "Application to maintain hierarchy of merchants and sales"
+
+jdkPackagerType := "installer"
