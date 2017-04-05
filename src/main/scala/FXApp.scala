@@ -4,6 +4,7 @@
 
 package me.demongoo.merchapp
 
+import scalafx.Includes._
 import scalafx.application.JFXApp
 import scalafx.application.JFXApp.PrimaryStage
 import scalafx.geometry.Insets
@@ -15,6 +16,8 @@ import scalafx.scene.paint._
 import scalafx.scene.text.Text
 
 object FXApp extends JFXApp {
+  // app init
+  me.demongoo.merchapp.db.boot() // db bootstrap
 
   stage = new PrimaryStage {
     //    initStyle(StageStyle.Unified)
@@ -42,6 +45,11 @@ object FXApp extends JFXApp {
               color = DarkGray
               radius = 15
               spread = 0.25
+            }
+            onMouseClicked = handle {
+              import org.squeryl.PrimitiveTypeMode._
+              import me.demongoo.merchapp.db._
+              transaction { MerchantDb.printDdl }
             }
           }
         )
