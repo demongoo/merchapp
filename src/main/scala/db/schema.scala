@@ -10,6 +10,7 @@ import java.sql.Timestamp
 import org.squeryl.PrimitiveTypeMode._
 import org.squeryl.adapters.H2Adapter
 import org.squeryl._
+import org.squeryl.dsl._
 import org.squeryl.annotations.{Column, ColumnBase}
 
 package object `db` {
@@ -59,6 +60,8 @@ package object `db` {
   ) extends KeyedEntity[Int] {
     def this() = this(0, Some(0), 0, "", Some(""), Some(""), Some(""), Some(""), Some(""), Some(""), true, new Timestamp(System.currentTimeMillis()))
 
+
+    // social network ids
     def getSocials: Seq[SocialRef] = social.map(_.split("\n").toSeq.map(_.trim).map(_.split(":", 2)).collect {
       case Array(nw, ident) => SocialRef(nw, ident)
     }).getOrElse(Seq.empty)
@@ -67,6 +70,33 @@ package object `db` {
       Some(refs.map(r => r.network + ":" + r.id).mkString("\n"))
     else
       None
+
+
+    /**
+     * Parent merchant
+     *
+     * @return Parent merchant if any
+     */
+    def parent: Option[Merchant] = MerchantDb.parent2merchants.right(this).take(1).headOption
+
+
+    /**
+     * Set the parent merchant
+     *
+     * @param m Parent merchant
+     */
+    def setParent(m: Merchant): Unit = {
+      parentId = Some(m.id)
+      level = m.id + 1
+    }
+
+
+    /**
+     * Child merchants of this merchant
+     *
+     * @return Child merchants
+     */
+    lazy val children: OneToMany[Merchant] = MerchantDb.parent2merchants.left(this)
   }
 
   // Merchant discount
