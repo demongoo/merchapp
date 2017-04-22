@@ -1,6 +1,13 @@
-.text-field {
-  -fx-border-color: black;
-  -fx-border-width: 2px;
-  -fx-background-color: green;
-  -fx-text-fill: lightblue;
+.root {
+  col-base-bg: #26579E;
+  col-text-inverted: #B0D5FF;
+}
+
+.left-menu {
+  -fx-background-color: col-base-bg;
+  -fx-text-fill: col-text-inverted;
+}
+
+.left-menu .label, .left-menu .hyperlink {
+  -fx-text-fill: col-text-inverted;
 }

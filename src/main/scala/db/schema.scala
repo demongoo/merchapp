@@ -23,6 +23,8 @@ package object `db` {
       java.sql.DriverManager.getConnection("jdbc:h2:mem:dbname;DB_CLOSE_DELAY=-1", "sa", ""),
       new H2Adapter
     ))
+    db_create()
+    gen_test_data()
   }
 
 
@@ -234,5 +236,65 @@ package object `db` {
     val merchant2orders = oneToManyRelation(merchants, orders).via((m, o) => m.id === o.merchantId)
     val order2items = oneToManyRelation(orders, orderItems).via((o, oi) => o.id === oi.orderId)
     val product2orderItems = oneToManyRelation(products, orderItems).via((p, oi) => p.id === oi.productId)
+  }
+
+
+  /**
+   * Creating new DB if nothing is there
+   */
+  private def db_create(): Unit = transaction {
+    try
+      MerchantDb.merchants.head
+    catch {
+      case _: RuntimeException => println("Creating new database"); MerchantDb.create
+    }
+  }
+
+
+  /**
+   * Test data generation
+   */
+  private def gen_test_data(): Unit = {
+    transaction {
+      // merchant 1
+      val m1 = MerchantDb.merchants.insert({
+        val m = new Merchant(name = "Dmitry", company = Some("FMW"), email = Some("dmitry.revenko@gmail.com"))
+        m.setSocials(Seq(
+          SocialRef("facebook", "2323232"),
+          SocialRef("skype", "dmitry.revenko")
+        ))
+        m
+      })
+
+      // merchants 2 and 3
+      val m2 = MerchantDb.merchants.insert({
+        val m = new Merchant(name = "Cot", company = Some("Beegle"), email = Some("kort@gmail.com"))
+        m.setParent(m1)
+        m
+      })
+
+      val m3 = MerchantDb.merchants.insert({
+        val m = new Merchant(name = "Pet", company = Some("Froogle"), email = Some("chort@gmail.com"))
+        m.setParent(m1)
+        m
+      })
+
+      // merchant 4
+      val m4 = MerchantDb.merchants.insert({
+        val m = new Merchant(name = "Level 3 merch", company = Some("Beegle"), email = Some("ukuk@gmail.com"))
+        m.setParent(m3)
+        m
+      })
+
+      println(MerchantDb.merchants.take(5).toList)
+
+      val m = MerchantDb.merchants.lookup(4)
+      println(m.get.parent)
+      println(m.get.children.toList)
+
+      val n = MerchantDb.merchants.lookup(1)
+      println(n.get.parent)
+      println(n.get.children.toList)
+    }
   }
 }
