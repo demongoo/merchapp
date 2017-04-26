@@ -1,13 +1,34 @@
 .root {
   col-base-bg: #26579E;
   col-text-inverted: #B0D5FF;
+  col-light-bg: #EEE5FF;
 }
 
 .left-menu {
   -fx-background-color: col-base-bg;
   -fx-text-fill: col-text-inverted;
+  -fx-padding: 20px 15px;
+  -fx-border-color: col-text-inverted;
+  -fx-border-width: 0 1px 0 0;
+  -fx-border-style: solid;
 }
 
 .left-menu .label, .left-menu .hyperlink {
   -fx-text-fill: col-text-inverted;
+}
+
+.left-menu .label {
+  -fx-font-size: 15px;
+  -fx-font-weight: bold;
+}
+
+.left-menu .hyperlink {
+  -fx-font-size: 12px;
+  -fx-padding: 0 0 0 5px;
+  -fx-border-insets: 0 0 0 5px;
+  -fx-font-weight: 300;
+}
+
+.right-pane {
+  -fx-background-color: linear-gradient(col-light-bg 0%, col-light-bg 90%, col-base-bg 100%);
 }

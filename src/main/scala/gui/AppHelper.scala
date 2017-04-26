@@ -7,7 +7,7 @@ import scalafx.Includes._
 object MenuConf {
   sealed trait Position
   case class MenuItem(title: String, action: () => Unit) extends Position
-  case class Header(title: String) extends Position
+  case class Section(title: String, items: Seq[MenuItem] = Seq()) extends Position
 }
 
 object AppHelper {
@@ -16,15 +16,15 @@ object AppHelper {
    * @param items List of menu items
    * @return Pane with menu
    */
-  def buildLeftMenu(items: Seq[MenuConf.Position]): Pane = new VBox {
+  def buildLeftMenu(items: Seq[MenuConf.Section]): Pane = new VBox {
     styleClass = Seq("left-menu")
 
-    children = items map {
-      case MenuConf.Header(title) => new Label(title)
-
-      case MenuConf.MenuItem(title, action) => new Hyperlink {
-        text = title
-        onAction = handle { action() }
+    children = items flatMap { sect =>
+      Seq(new Label(sect.title)) ++ sect.items.map {
+        case MenuConf.MenuItem(title, action) => new Hyperlink {
+          text = title
+          onAction = handle { action() }
+        }
       }
     }
   }

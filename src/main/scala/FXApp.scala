@@ -24,12 +24,14 @@ object FXApp extends JFXApp {
   me.demongoo.merchapp.db.boot() // db bootstrap
 
   val bp = new BorderPane {
-    
+    // left pane is menu
     left = AppHelper.buildLeftMenu(Seq(
-      MenuConf.Header("БД"),
-      MenuConf.MenuItem("Продавцы", () => println("Merchants")),
-      MenuConf.MenuItem("Товары", () => println("Products")),
-      MenuConf.MenuItem("Карты", () => println("Cards"))
+      MenuConf.Section("БД", Seq(
+        MenuConf.MenuItem("Продавцы", () => showPage(new pages.Index)),
+        MenuConf.MenuItem("Товары", () => println("Products")),
+        MenuConf.MenuItem("Карты", () => println("Cards"))
+      )),
+      MenuConf.Section("Аналитика")
     ))
 
     center = new VBox {
@@ -92,4 +94,6 @@ object FXApp extends JFXApp {
 
   bp.prefWidth <== stage.width
   bp.prefHeight <== stage.height
+
+  def showPage(page: Page): Unit = bp.center = page.build
 }
